@@ -1,7 +1,13 @@
 ﻿# Creates a new registry key or updates the existing RestoreConnection key in order to stop mapped network drives from auto connection on start up.
 # This script makes persistent network drives only attempt connection when opened in explorer.
 
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-windowstyle hidden -NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    $arguments = "&" + $MyInvocation.MyCommand.Definition + "" 
+    Write-Host "You didn't run this script as an Administrator. This script will self elevate to run as an Administrator." -ForegroundColor "White"
+    Start-Sleep 1
+    Start-Process "powershell.exe" -Verb RunAs -ArgumentList $arguments
+    Break
+}
 
 #Now running with as admin
 
